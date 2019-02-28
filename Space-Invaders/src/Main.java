@@ -9,7 +9,7 @@ public class Main extends Application{
 	final Pane root = new Pane();
 	final Scene scene = new Scene(root);
 
-	private Sprite player = new Sprite(300,750,40,40,"player",Color.BLUE);
+	private Sprite player = new Sprite(380,750,40,40,"player",Color.BLUE);
 
 	//Creating a shoot method 
 	
@@ -23,7 +23,7 @@ public class Main extends Application{
 	public void start(Stage Stage) throws Exception {
 	
 	
-	root.setPrefSize(600,800);
+	root.setPrefSize(800,800);
 	root.getChildren().add(player);
 	
 	//Defining actions for Player
@@ -43,20 +43,14 @@ public class Main extends Application{
 				case SPACE:
 					shoot(player);
 					break;
-				case UP:
-					player.moveUp();
-					break;
-				case DOWN:
-					player.moveDown();
-					break;
-
+				
 			}
 		}
 
 	});
 
-	for(int j =0; j<5;j++) {
-		Sprite s = new Sprite(100+j*100,50,30,30,"Sprite",Color.RED);
+	for(int j =0; j<11;j++) {
+		Sprite s = new Sprite(100+j*60,50,30,30,"Sprite",Color.RED);
 		root.getChildren().add(s);
 
 	}
