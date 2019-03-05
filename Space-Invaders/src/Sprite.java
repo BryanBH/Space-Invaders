@@ -1,38 +1,60 @@
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class Sprite extends Rectangle {
-	boolean dead = false;
-	final String type;
+class Sprite extends Rectangle {
+    boolean dead = false;
+    final String type;
+    private double maxX;
+	private double maxY;
+	private double velX;
+	private double velY;
 
-	/**
-	* Sprite method that handles with the status of the object.
-	* @param axis x and y, width, height, type of the object and color of the object.
-	*/
-	public Sprite(int x, int y, int w, int h,String type, Color color){
-		super(w,h,color);
+   public Sprite(int x, int y, int w, int h, String type, Color color) {
+        super(w, h, color);
 
-		this.type = type;
+        this.type = type;
+        setTranslateX(x);
+        setTranslateY(y);
+    }
 
-		// Movement of the object
-		setTranslateX(x);
-		setTranslateY(y);
+    void moveLeft() {
+        setTranslateX(getTranslateX() - 5);
+    }
+
+    void moveRight() {
+        setTranslateX(getTranslateX() + 5);
+    }
+
+    void moveUp() {
+        setTranslateY(getTranslateY() - 5);
+    }
+
+    void moveDown() {
+        setTranslateY(getTranslateY() + 5);
+    }
+    
+    void update() {
+    	
+    }
+
+	public void setBoundires(double x , double y) {
+		this.maxX = x;
+		this.maxY = y;
 	}
-
-	// NOTE:position wise works like airplane controllers:  {positive digits - down} &  {negative digits - up}
-	 void moveLeft() {
-		setTranslateX(getTranslateX()-5);
+	
+	public void setVelx(double velX) {
+		this.velX =velX;
 	}
-
-	void moveRight() {
-		setTranslateX(getTranslateX()+5);
+	
+	public void setVelY(double velY) {
+		this.velY = velY;
 	}
-
-	void moveUp() {
-		setTranslateY(getTranslateY()-5);
+	
+	public double getVelX() {
+		return velX;
 	}
-
-	void moveDown() {
-		setTranslateY(getTranslateY()+5);
+	
+	public double getVelY() {
+		return velY;
 	}
 }
