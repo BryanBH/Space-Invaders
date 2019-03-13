@@ -43,7 +43,7 @@ class Sprite extends Rectangle {
 	}
 	
 	public void setVelx(double velX) {
-		this.velX =velX;
+		this.velX = velX;
 	}
 	
 	public void setVelY(double velY) {
