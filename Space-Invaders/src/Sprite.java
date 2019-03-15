@@ -1,60 +1,91 @@
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 class Sprite extends Rectangle {
-    boolean dead = false;
-    final String type;
-    private double maxX;
+	boolean dead = false;
+	final String type;
+	private double maxX;
 	private double maxY;
 	private double velX;
 	private double velY;
+	private double x;
+	private double y;
 
-   public Sprite(int x, int y, int w, int h, String type, Color color) {
-        super(w, h, color);
+	Image img;
+	ImageView node = new ImageView();
 
-        this.type = type;
-        setTranslateX(x);
-        setTranslateY(y);
-    }
+	public Sprite(int x, int y, int w, int h, Image img, String type, Color color) {
+		super(w, h, color);
 
-    void moveLeft() {
-        setTranslateX(getTranslateX() - 5);
-    }
+		this.x = x;
+		this.y = y;
+		this.img = img;
+		node.setImage(img);
+		node.setX(x);
+		node.setY(y);
 
-    void moveRight() {
-        setTranslateX(getTranslateX() + 5);
-    }
+		this.type = type;
 
-    void moveUp() {
-        setTranslateY(getTranslateY() - 5);
-    }
+	}
 
-    void moveDown() {
-        setTranslateY(getTranslateY() + 5);
-    }
-    
-    void update() {
-    	
-    }
+	void moveLeft() {
+		setx(getx()-5);
+	}
 
-	public void setBoundires(double x , double y) {
-		this.maxX = x;
-		this.maxY = y;
+	void moveRight() {
+		setx(getx()+5);
+	}
+
+	void moveUp() {
+		sety(gety()-5);
+	}
+
+	void moveDown() {
+		sety(gety()+5);
+	}
+
+	void update() {
+
+	}
+
+	public double getx() {
+		return x;
+	}
+	
+	public double gety() {
+		return y;
+	}
+	
+	public void setx(double x) {
+		this.x=x;
+	}
+	public void sety(double y) {
+		this.y = y;
 	}
 	
 	public void setVelx(double velX) {
 		this.velX = velX;
 	}
-	
+
 	public void setVelY(double velY) {
 		this.velY = velY;
 	}
-	
+
 	public double getVelX() {
 		return velX;
 	}
-	
+
 	public double getVelY() {
 		return velY;
+	}
+	public ImageView getGraphic() {
+		return node;
+	}
+	
+	public void setBoundires(double x, double y) {
+		this.maxX = x;
+		this.maxY = y;
 	}
 }
