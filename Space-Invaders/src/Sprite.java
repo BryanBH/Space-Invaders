@@ -6,8 +6,6 @@ import javafx.scene.shape.Rectangle;
 class Sprite extends Rectangle {
 	boolean dead = false;
 	final String type;
-	private double maxX;
-	private double maxY;
 	private double velX;
 	private double velY;
 	private double x;
@@ -27,23 +25,27 @@ class Sprite extends Rectangle {
 		node.setY(y);
 
 		this.type = type;
-
 	}
 
 	void moveLeft() {
-		setx(getx()-5);
+		node.setX(node.getX()-(5+velX));
+		setx(node.getX());
 	}
 
 	void moveRight() {
-		setx(getx()+5);
+		node.setX(node.getX()+(5+velX));
+		setx(node.getX());
 	}
 
 	void moveUp() {
-		sety(gety()-5);
+		node.setY(node.getY()-(5+velY));
+		sety(node.getY());
+
 	}
 
 	void moveDown() {
-		sety(gety()+5);
+		node.setY(node.getY()+(5+velY));
+		sety(node.getY());
 	}
 
 	void update() {
@@ -73,19 +75,9 @@ class Sprite extends Rectangle {
 		this.velY = velY;
 	}
 
-	public double getVelX() {
-		return velX;
-	}
-
-	public double getVelY() {
-		return velY;
-	}
 	public ImageView getGraphic() {
 		return node;
 	}
 	
-	public void setBoundires(double x, double y) {
-		this.maxX = x;
-		this.maxY = y;
-	}
+	
 }

@@ -22,14 +22,14 @@ public class Main extends Application {
 
 	private Pane root = new Pane();
 
-	Image spaceShip = new Image("spaceship.jpg", 40, 40, true, true);
-	private Sprite player = new Sprite(300, 750, 40, 40, spaceShip, "player", Color.BLUE);
+	Image spaceShip = new Image("spaceship.jpg", 40, 40,false , false);
+	private Sprite player = new Sprite(380, 750, 40, 40, spaceShip, "player", Color.BLUE);
 
 	private Parent content() {
 		root.setPrefSize(800, 800);
 
 		ImageView galaxy = new ImageView(
-				new Image(getClass().getResourceAsStream("galaxy.png"), 800, 800, false, false));
+		new Image(getClass().getResourceAsStream("galaxy.png"), 850, 850, false, false));
 		root.getChildren().add(galaxy);
 
 		root.getChildren().add(player.getGraphic());
@@ -51,16 +51,15 @@ public class Main extends Application {
 	private void nextLvl() {
 		for (int i = 0; i < 11; i++) {
 			Image alien = new Image("alien.png", 40, 40, true, true);
-			Sprite s = new Sprite(90 + i * 60, 50, 30, 30, alien, "enemy", Color.RED);
-			s.setBoundires(0, 800);
-
+			Sprite s = new Sprite(80 + i * 60, 50, 30, 30, alien, "enemy", Color.RED);
+			
 			root.getChildren().add(s.getGraphic());
 		}
 	}
 
 	private void shoot(Sprite shooter) {
 		Image laser = new Image("laser.png", 40, 40, true, true);
-		Sprite bullet = new Sprite((int) shooter.getTranslateX() + 20, (int) shooter.getTranslateY(), 5, 20, laser,
+		Sprite bullet = new Sprite((int) shooter.getx() + 16, (int) shooter.gety() - 25, 5, 20, laser,
 				shooter.type + "bullet", Color.BLACK);
 
 		root.getChildren().add(bullet.getGraphic());
@@ -76,8 +75,11 @@ public class Main extends Application {
 		root.setOnKeyPressed(e -> {
 			switch (e.getCode()) {
 			case LEFT:
+				player.setVelx(5);
 				player.moveLeft();
+				break;
 			case RIGHT:
+				player.setVelx(5);
 				player.moveRight();
 				break;
 			case SPACE:
@@ -87,13 +89,27 @@ public class Main extends Application {
 				System.exit(0);
 				break;
 			case P:
-
+				
+			default:
+				break;
+			}
+		});
+		
+		root.setOnKeyReleased(e ->{
+			switch (e.getCode()) {
+			case LEFT:
+				player.setVelx(0);
+				break;
+			case RIGHT:
+				player.setVelx(0);
+				break;
 			default:
 				break;
 			}
 		});
 
 		stage.setScene(scene);
+		stage.setResizable(false);
 		stage.show();
 		root.requestFocus();
 	}
