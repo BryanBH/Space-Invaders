@@ -1,32 +1,27 @@
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
-class Sprite extends Rectangle {
-	boolean dead = false;
-	final String type;
+public class Player {
+boolean dead = false;
+	
 	private double velX;
 	private double velY;
 	private double x;
 	private double y;
-
-	Image img;
-	ImageView node = new ImageView();
-
-	public Sprite(int x, int y, int w, int h, Image img, String type, Color color) {
-		super(w, h, color);
-
-		this.x = x;
-		this.y = y;
-		this.img = img;
-		node.setImage(img);
-		node.setX(x);
-		node.setY(y);
-
-		this.type = type;
+	ImageView node;
+	
+	public Player(int x, int y) {
+		Image player = new Image("spaceship.jpg",20,20,false,false);
+		this.x=x;
+		this.y=y;
+		node = new ImageView();
+		node.setImage(player);
+		node.setLayoutX(x);
+		node.setLayoutY(y);
+		node.setFitHeight(50);
+		node.setFitWidth(50);
+		
 	}
-
 	void moveLeft() {
 		node.setX(node.getX()-(5+velX));
 		setx(node.getX());
@@ -47,11 +42,7 @@ class Sprite extends Rectangle {
 		node.setY(node.getY()+(5+velY));
 		sety(node.getY());
 	}
-
-	void update() {
-
-	}
-
+	
 	public double getx() {
 		return x;
 	}
@@ -74,10 +65,8 @@ class Sprite extends Rectangle {
 	public void setVelY(double velY) {
 		this.velY = velY;
 	}
-
+	
 	public ImageView getGraphic() {
 		return node;
 	}
-	
-	
 }
