@@ -10,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -24,7 +26,6 @@ public class Main extends Application {
 	List<ImageView> aliens = new ArrayList<ImageView>();
 	List<Circle> playerBullets = new ArrayList<Circle>();
 	List<Circle> alienBullets = new ArrayList<Circle>();
-	ImageView player;
 	Circle dot = new Circle();
 	boolean toRight = true;
 	Text lives;
@@ -32,107 +33,109 @@ public class Main extends Application {
 	int numLives = 3;
 	int numPoints = 0;
 	double velX = 3;
-	
 	final int HEIGHT = 800;
 	final int WIDTH = 600;
-	
+	MediaPlayer mediaplayer;
+
+	Player player = new Player(((WIDTH / 2) - 20), (HEIGHT - 50));
+
 	public static void main(String[] args) {
 		launch(args);
 	}
 
 	@Override
 	public void start(Stage Stage) throws Exception {
-		
+
 		// Lives and points
 		lives = new Text("Lives: 3");
 		lives.setLayoutX(20);
 		lives.setLayoutY(30);
-		lives.setFont(Font.font("Times New Roman",FontWeight.BOLD,20));
+		lives.setFont(Font.font("Times New Roman", FontWeight.BOLD, 20));
 		lives.setFill(Color.WHITE);
 		points = new Text("Points: 0");
 		points.setLayoutX(480);
 		points.setLayoutY(30);
-		points.setFont(Font.font("Times New Roman",FontWeight.BOLD,20));
+		points.setFont(Font.font("Times New Roman", FontWeight.BOLD, 20));
 		points.setFill(Color.WHITE);
-		root.getChildren().addAll(lives,points);
-		
-		dot.setLayoutX(0);
-		
-		// creates player
-		player = player();
-		root.getChildren().add(player);
+		root.getChildren().addAll(lives, points);
+
+		// Music 
+		Music();
+		// Circle dot 
+		dot.setLayoutX(55);
+
+		// adds player to pane
+		root.getChildren().add(player.getGraphic());
 		// creates aliens
 		addAliens();
-		
+
 		// animationTimer
 		timer = new AnimationTimer() {
 
 			@Override
 			public void handle(long now) {
-				
+
 				update();
 			}
-			
+
 		};
 		timer.start();
-		
-		// Timer to make aliens shoot 
-		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(2), e ->  {
-			if(!aliens.isEmpty()) {
+
+		// Timer to make aliens shoot
+		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+			if (!aliens.isEmpty()) {
 				alienShoot();
 			}
 		}));
 		timeline.setCycleCount(Animation.INDEFINITE);
 		timeline.play();
-		
-		// stage set up 
-		
-		Scene scene = new Scene(root,700,HEIGHT);
+
+		// stage set up
+		Scene scene = new Scene(root, WIDTH, HEIGHT);
 		scene.setFill(Color.BLACK);
 		// move player
 		root.setOnKeyPressed(e -> {
 			switch (e.getCode()) {
 			case LEFT:
-				player.setLayoutX(player.getLayoutX() - (5 + velX));
-				if(player.getLayoutX()<0) {
-					player.setLayoutX(0);
+				player.moveLeft();
+				if (player.getX() <= 0) {
+					player.setX(0);
 				}
 				break;
 			case RIGHT:
-				player.setLayoutX(player.getLayoutX() + (5+ velX));
-				if(player.getLayoutX()>600) {
-					player.setLayoutX(600);
+				player.moveRight();
+				;
+				if (player.getX() >= 550) {
+					player.setX(550);
 				}
 				break;
 			case SPACE:
-				playerShoot(player.getLayoutX());
+				playerShoot(player.getX());
 				break;
 			case ESCAPE:
 				System.exit(0);
 				break;
-			case P:
-				
 			default:
 				break;
 			}
 		});
-		
+
 		Stage.setScene(scene);
 		Stage.setTitle("Space Invaders");
 		Stage.show();
 		root.requestFocus();
-		
+
 	}
-	
+
 	public void update() {
-		// updating monsters shoots
-		alienShootUpdate();
+		// updating alien shoots
+		alienShootUp();
 		// updating players Shoots
 		playersShootUpdate();
 		// checking if player is hit
-		isPlayerDestroyed();
+		playerDestroyed();
 		// checking if aliens are hit
-		isAlienDestroyed();
+		alienDestroyed();
 		// moving aliens
 		alienMovement();
 		// creates next level
@@ -140,12 +143,29 @@ public class Main extends Application {
 		// game over text
 		gameOver();
 	}
-	
-	// Random 
-	public int random(int min, int max) {
-		return (int) (Math.random() * max +min);
+
+	// Music 
+	private void Music() {
+		mediaplayer = new MediaPlayer(new Media(getClass().getResource("Space Invaders.mp3").toString()));
+		mediaplayer.setAutoPlay(true);
+		mediaplayer.setCycleCount(MediaPlayer.INDEFINITE);
 	}
-	
+	// Random
+	public int random(int min, int max) {
+		return (int) (Math.random() * max + min);
+	}
+
+	public ImageView Alien(double x, double y) {
+		Image image = new Image("alien.png", 20, 20, false, false);
+		ImageView node = new ImageView();
+		node.setImage(image);
+		node.setLayoutX(x);
+		node.setLayoutY(y);
+		node.setFitHeight(50);
+		node.setFitWidth(50);
+		return node;
+	}
+
 	// Choses random alien and makes it shoot
 	public void alienShoot() {
 		int getAlienBulletIndex = random(0, aliens.size() - 1);
@@ -153,40 +173,40 @@ public class Main extends Application {
 				aliens.get(getAlienBulletIndex).getLayoutY() + 25));
 		root.getChildren().add((Node) alienBullets.get(alienBullets.size() - 1));
 	}
-	
+
 	public void addAliens() {
-		for (int j = 0, w = 80; j < 6; j++, w += 70) {
+		for (int j = 0, w = 90; j < 6; j++, w += 70) {
 			aliens.add(Alien(w, 50));
 			root.getChildren().add((Node) aliens.get(j));
 		}
-		for (int j = 0, w = 80; j < 6; j++, w += 70) {
+		for (int j = 0, w = 90; j < 6; j++, w += 70) {
 			aliens.add(Alien(w, 120));
 			root.getChildren().add((Node) aliens.get(j + 6));
 		}
-		for (int j = 0, w = 80; j < 6; j++, w += 70) {
+		for (int j = 0, w = 90; j < 6; j++, w += 70) {
 			aliens.add(Alien(w, 190));
 			root.getChildren().add((Node) aliens.get(j + 12));
 		}
 	}
-	
+
 	public void alienMovement() {
-		
+
 		double velocity;
-		
-		if(toRight) {
-			velocity = 0.6;
+
+		if (toRight) {
+			velocity = 0.5;
 		} else {
-			velocity = -0.6;
+			velocity = -0.5;
 		}
-		
-		if (dot.getLayoutX() >= 160) {
+
+		if (dot.getLayoutX() >= 110) {
 			toRight = false;
 			for (int i = 0; i < aliens.size(); i++) {
 				aliens.get(i).setLayoutY(aliens.get(i).getLayoutY() + 8);
 			}
 
 		}
-		if (dot.getLayoutX() <= -20) {
+		if (dot.getLayoutX() <= 0) {
 			toRight = true;
 			for (int i = 0; i < aliens.size(); i++) {
 				aliens.get(i).setLayoutY(aliens.get(i).getLayoutY() + 8);
@@ -198,7 +218,7 @@ public class Main extends Application {
 		}
 		dot.setLayoutX(dot.getLayoutX() + velocity);
 	}
-	
+
 	public Circle shoot(double x, double y) {
 		Circle c = new Circle();
 		c.setFill(Color.RED.brighter());
@@ -207,34 +227,12 @@ public class Main extends Application {
 		c.setRadius(6);
 		return c;
 	}
-	
-	public ImageView player() {
-		Image player = new Image("spaceship.jpg",20,20,false,false);
-		ImageView node = new ImageView();
-		node.setImage(player);
-		node.setLayoutX((WIDTH/2) -20);
-		node.setLayoutY(HEIGHT-50);
-		node.setFitHeight(50);
-		node.setFitWidth(50);
-		return node;
-	}
 
-	public ImageView Alien(double x, double y) {
-		Image image = new Image("alien.png",20,20,false,false);
-		ImageView node = new ImageView();
-		node.setImage(image);
-		node.setLayoutX(x);
-		node.setLayoutY(y);
-		node.setFitHeight(50);
-		node.setFitWidth(50);
-		return node;
-	}
-	
 	public void playerShoot(double x) {
-		playerBullets.add(shoot((x + 25), HEIGHT-50));
+		playerBullets.add(shoot((x + 25), HEIGHT - 50));
 		root.getChildren().add(playerBullets.get(playerBullets.size() - 1));
 	}
-	
+
 	private void playersShootUpdate() {
 		if (!playerBullets.isEmpty()) {
 			for (int i = 0; i < playerBullets.size(); i++) {
@@ -246,8 +244,8 @@ public class Main extends Application {
 			}
 		}
 	}
-	
-	private void alienShootUpdate() {
+
+	private void alienShootUp() {
 		if (!alienBullets.isEmpty()) {
 			for (int i = 0; i < alienBullets.size(); i++) {
 				alienBullets.get(i).setLayoutY(alienBullets.get(i).getLayoutY() + 3);
@@ -258,9 +256,23 @@ public class Main extends Application {
 			}
 		}
 	}
-	
-	private void isAlienDestroyed() {
 
+	public void playerDestroyed() {
+		for (int i = 0; i < alienBullets.size(); i++) {
+
+			if (((alienBullets.get(i).getLayoutX() > player.getX())
+					&& ((alienBullets.get(i).getLayoutX() < player.getX() + 50))
+					&& ((alienBullets.get(i).getLayoutY() > player.getY())
+					&& ((alienBullets.get(i).getLayoutY() < player.getY() + 50))))) {
+				player.setX((WIDTH / 2) - 20);
+				numLives -= 1;
+				lives.setText("Lives: " + String.valueOf(numLives));
+
+			}
+		}
+	}
+
+	private void alienDestroyed() {
 		for (int i = 0; i < playerBullets.size(); i++) {
 			for (int j = 0; j < aliens.size(); j++) {
 				if (((playerBullets.get(i).getLayoutX() > aliens.get(j).getLayoutX())
@@ -277,52 +289,38 @@ public class Main extends Application {
 			}
 		}
 	}
-	
-	private void isPlayerDestroyed() {
 
-		for (int i = 0; i < alienBullets.size(); i++) {
-
-			if (((alienBullets.get(i).getLayoutX() > player.getLayoutX())
-					&& ((alienBullets.get(i).getLayoutX() < player.getLayoutX() + 50))
-					&& ((alienBullets.get(i).getLayoutY() > player.getLayoutY())
-					&& ((alienBullets.get(i).getLayoutY() < player.getLayoutY() + 50))))) {
-				player.setLayoutX((WIDTH/2) -20);
-				numLives -= 1;
-				lives.setText("Lives: " + String.valueOf(numLives));
-
-			}
-		}
-	}
-	
 	// Creates the next level of aliens
 	public void nextLevel() {
 		if (aliens.isEmpty()) {
 			addAliens();
 		}
 	}
-	
-	// Prints game over texts 
+
+	// Prints game over texts
 	public void gameOver() {
 		if (numLives <= 0) {
 			Text gameOver = new Text();
 			gameOver.setFont(Font.font("Burford Rustic", FontWeight.BOLD, 50));
-			gameOver.setX(WIDTH/4);
-			gameOver.setY(HEIGHT/2);
+			gameOver.setX(WIDTH / 4);
+			gameOver.setY(HEIGHT / 2);
 			gameOver.setFill(Color.RED);
 			gameOver.setStrokeWidth(3);
 			gameOver.setStroke(Color.CRIMSON);
 			gameOver.setText("GAME OVER");
 			root.getChildren().add(gameOver);
-			Text highScore =  new Text();
-			highScore.setFont(Font.font("Burford Rustic", FontWeight.BOLD,50));
-			highScore.setX(WIDTH/6);
-			highScore.setY(HEIGHT-300);
+			Text highScore = new Text();
+			highScore.setFont(Font.font("Burford Rustic", FontWeight.BOLD, 50));
+			highScore.setX(WIDTH / 4);
+			highScore.setY(HEIGHT - 300);
 			highScore.setFill(Color.GOLD);
 			highScore.setStrokeWidth(3);
 			highScore.setStroke(Color.GOLD);
 			highScore.setText("High Score: " + String.valueOf(numPoints));
 			root.getChildren().add(highScore);
 			timer.stop();
+			mediaplayer.stop();
+
 		}
 	}
 }

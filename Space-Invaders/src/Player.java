@@ -2,10 +2,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class Player {
-boolean dead = false;
+
 	
-	private double velX;
-	private double velY;
+	private double velX = 5;
 	private double x;
 	private double y;
 	ImageView node;
@@ -16,55 +15,40 @@ boolean dead = false;
 		this.y=y;
 		node = new ImageView();
 		node.setImage(player);
-		node.setLayoutX(x);
-		node.setLayoutY(y);
+		node.setX(x);
+		node.setY(y);
 		node.setFitHeight(50);
 		node.setFitWidth(50);
 		
 	}
 	void moveLeft() {
 		node.setX(node.getX()-(5+velX));
-		setx(node.getX());
+		setX(node.getX());
 	}
 
 	void moveRight() {
 		node.setX(node.getX()+(5+velX));
-		setx(node.getX());
+		setX(node.getX());
 	}
 
-	void moveUp() {
-		node.setY(node.getY()-(5+velY));
-		sety(node.getY());
-
-	}
-
-	void moveDown() {
-		node.setY(node.getY()+(5+velY));
-		sety(node.getY());
-	}
 	
-	public double getx() {
+	public double getX() {
 		return x;
 	}
 	
-	public double gety() {
+	public double getY() {
 		return y;
 	}
 	
-	public void setx(double x) {
+	public void setX(double x) {
 		this.x=x;
+		node.setX(x);
 	}
-	public void sety(double y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 	
-	public void setVelx(double velX) {
-		this.velX = velX;
-	}
-
-	public void setVelY(double velY) {
-		this.velY = velY;
-	}
+	
 	
 	public ImageView getGraphic() {
 		return node;
