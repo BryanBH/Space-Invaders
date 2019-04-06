@@ -36,6 +36,7 @@ public class Main extends Application {
 	final int HEIGHT = 800;
 	final int WIDTH = 600;
 	MediaPlayer mediaplayer;
+	MediaPlayer endGame;
 
 	Player player = new Player(((WIDTH / 2) - 20), (HEIGHT - 50));
 
@@ -59,9 +60,9 @@ public class Main extends Application {
 		points.setFill(Color.WHITE);
 		root.getChildren().addAll(lives, points);
 
-		// Music 
+		// Music
 		Music();
-		// Circle dot 
+		// Circle dot
 		dot.setLayoutX(55);
 
 		// adds player to pane
@@ -144,12 +145,13 @@ public class Main extends Application {
 		gameOver();
 	}
 
-	// Music 
+	// Music
 	private void Music() {
 		mediaplayer = new MediaPlayer(new Media(getClass().getResource("Space Invaders.mp3").toString()));
 		mediaplayer.setAutoPlay(true);
 		mediaplayer.setCycleCount(MediaPlayer.INDEFINITE);
 	}
+
 	// Random
 	public int random(int min, int max) {
 		return (int) (Math.random() * max + min);
@@ -263,7 +265,7 @@ public class Main extends Application {
 			if (((alienBullets.get(i).getLayoutX() > player.getX())
 					&& ((alienBullets.get(i).getLayoutX() < player.getX() + 50))
 					&& ((alienBullets.get(i).getLayoutY() > player.getY())
-					&& ((alienBullets.get(i).getLayoutY() < player.getY() + 50))))) {
+							&& ((alienBullets.get(i).getLayoutY() < player.getY() + 50))))) {
 				player.setX((WIDTH / 2) - 20);
 				numLives -= 1;
 				lives.setText("Lives: " + String.valueOf(numLives));
@@ -278,7 +280,7 @@ public class Main extends Application {
 				if (((playerBullets.get(i).getLayoutX() > aliens.get(j).getLayoutX())
 						&& ((playerBullets.get(i).getLayoutX() < aliens.get(j).getLayoutX() + 50))
 						&& ((playerBullets.get(i).getLayoutY() > aliens.get(j).getLayoutY())
-						&& ((playerBullets.get(i).getLayoutY() < aliens.get(j).getLayoutY() + 50))))) {
+								&& ((playerBullets.get(i).getLayoutY() < aliens.get(j).getLayoutY() + 50))))) {
 					root.getChildren().remove(aliens.get(j));
 					aliens.remove(j);
 					root.getChildren().remove(playerBullets.get(i));
@@ -318,6 +320,8 @@ public class Main extends Application {
 			highScore.setStroke(Color.GOLD);
 			highScore.setText("High Score: " + String.valueOf(numPoints));
 			root.getChildren().add(highScore);
+			endGame = new MediaPlayer(new Media(getClass().getResource("Game over fx.mp3").toString()));
+			endGame.play();
 			timer.stop();
 			mediaplayer.stop();
 
