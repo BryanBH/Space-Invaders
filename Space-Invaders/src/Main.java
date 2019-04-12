@@ -30,13 +30,17 @@ public class Main extends Application {
 	boolean toRight = true;
 	Text lives;
 	Text points;
+	int scoreMult = 1;
+	double speedMult = 1;
 	int numLives = 3;
 	int numPoints = 0;
 	double velX = 3;
 	final int HEIGHT = 800;
 	final int WIDTH = 600;
 	MediaPlayer mediaplayer;
+	MediaPlayer laserFx;
 	MediaPlayer endGame;
+	Timeline timeline;
 
 	Player player = new Player(((WIDTH / 2) - 20), (HEIGHT - 50));
 
@@ -75,15 +79,20 @@ public class Main extends Application {
 
 			@Override
 			public void handle(long now) {
-
-				update();
+				alienShootUp();
+				playersShootUpdate();
+				playerDestroyed();
+				alienDestroyed();
+				alienMovement();
+				nextLevel();
+				gameOver();
 			}
 
 		};
 		timer.start();
 
 		// Timer to make aliens shoot
-		Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+		 timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
 			if (!aliens.isEmpty()) {
 				alienShoot();
 			}
@@ -126,23 +135,6 @@ public class Main extends Application {
 		Stage.show();
 		root.requestFocus();
 
-	}
-
-	public void update() {
-		// updating alien shoots
-		alienShootUp();
-		// updating players Shoots
-		playersShootUpdate();
-		// checking if player is hit
-		playerDestroyed();
-		// checking if aliens are hit
-		alienDestroyed();
-		// moving aliens
-		alienMovement();
-		// creates next level
-		nextLevel();
-		// game over text
-		gameOver();
 	}
 
 	// Music
@@ -196,27 +188,27 @@ public class Main extends Application {
 		double velocity;
 
 		if (toRight) {
-			velocity = 0.5;
+			velocity = 0.5 * speedMult;
 		} else {
-			velocity = -0.5;
+			velocity = -0.5 * speedMult;
 		}
 
 		if (dot.getLayoutX() >= 110) {
 			toRight = false;
-			for (int i = 0; i < aliens.size(); i++) {
-				aliens.get(i).setLayoutY(aliens.get(i).getLayoutY() + 8);
+			for (int j = 0; j < aliens.size(); j++) {
+				aliens.get(j).setLayoutY(aliens.get(j).getLayoutY() + 8);
 			}
 
 		}
 		if (dot.getLayoutX() <= 0) {
 			toRight = true;
-			for (int i = 0; i < aliens.size(); i++) {
-				aliens.get(i).setLayoutY(aliens.get(i).getLayoutY() + 8);
+			for (int j = 0; j < aliens.size(); j++) {
+				aliens.get(j).setLayoutY(aliens.get(j).getLayoutY() + 8);
 			}
 		}
 
-		for (int i = 0; i < aliens.size(); i++) {
-			aliens.get(i).setLayoutX(aliens.get(i).getLayoutX() + velocity);
+		for (int j = 0; j < aliens.size(); j++) {
+			aliens.get(j).setLayoutX(aliens.get(j).getLayoutX() + velocity);
 		}
 		dot.setLayoutX(dot.getLayoutX() + velocity);
 	}
@@ -233,6 +225,10 @@ public class Main extends Application {
 	public void playerShoot(double x) {
 		playerBullets.add(shoot((x + 25), HEIGHT - 50));
 		root.getChildren().add(playerBullets.get(playerBullets.size() - 1));
+		laserFx = new MediaPlayer(new Media(getClass().getResource("laser fx.mp3").toString()));
+		laserFx.setVolume(laserFx.getVolume()/4);
+		laserFx.play();
+		
 	}
 
 	private void playersShootUpdate() {
@@ -285,7 +281,7 @@ public class Main extends Application {
 					aliens.remove(j);
 					root.getChildren().remove(playerBullets.get(i));
 					playerBullets.remove(i);
-					numPoints += 100;
+					numPoints += 100 * scoreMult;
 					points.setText("Points: " + String.valueOf(numPoints));
 				}
 			}
@@ -296,6 +292,8 @@ public class Main extends Application {
 	public void nextLevel() {
 		if (aliens.isEmpty()) {
 			addAliens();
+			scoreMult += 1;
+			speedMult += 0.5;
 		}
 	}
 
@@ -313,7 +311,7 @@ public class Main extends Application {
 			root.getChildren().add(gameOver);
 			Text highScore = new Text();
 			highScore.setFont(Font.font("Burford Rustic", FontWeight.BOLD, 50));
-			highScore.setX(WIDTH / 4);
+			highScore.setX(WIDTH / 5);
 			highScore.setY(HEIGHT - 300);
 			highScore.setFill(Color.GOLD);
 			highScore.setStrokeWidth(3);
@@ -322,6 +320,7 @@ public class Main extends Application {
 			root.getChildren().add(highScore);
 			endGame = new MediaPlayer(new Media(getClass().getResource("Game over fx.mp3").toString()));
 			endGame.play();
+			timeline.stop();
 			timer.stop();
 			mediaplayer.stop();
 
