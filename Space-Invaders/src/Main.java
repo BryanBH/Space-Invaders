@@ -226,7 +226,7 @@ public class Main extends Application {
 		playerBullets.add(shoot((x + 25), HEIGHT - 50));
 		root.getChildren().add(playerBullets.get(playerBullets.size() - 1));
 		laserFx = new MediaPlayer(new Media(getClass().getResource("laser fx.mp3").toString()));
-		laserFx.setVolume(laserFx.getVolume()/4);
+		laserFx.setVolume(laserFx.getVolume()/2);
 		laserFx.play();
 		
 	}
